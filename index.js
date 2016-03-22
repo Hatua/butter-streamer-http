@@ -5,7 +5,7 @@ var Streamer = require('butter-base-streamer');
 
 /* -- HTTP Streamer -- */
 function HttpStreamer(source, options) {
-	if(!(this instanceof HttpStreamer)) 
+	if(!(this instanceof HttpStreamer))
 		return new HttpStreamer(source, options);
 
 	Streamer.call(this, options);
@@ -65,6 +65,7 @@ HttpStreamer.prototype.destroy = function() {
 	this._streamify.unresolve();
 	this._req = null;
 	this._destroyed = true;
+    this.file = {};
 }
 
 module.exports = HttpStreamer;
