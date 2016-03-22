@@ -36,9 +36,10 @@ function HttpStreamer(source, options) {
 inherits(HttpStreamer, Streamer);
 
 HttpStreamer.prototype.config = {
-       name: 'HTTP Streamer',
-       protocol: /https?/,
-       type: 'http'
+	name: 'HTTP Streamer',
+	protocol: /https?/,
+	type: 'http',
+	priority: 100
 }
 
 HttpStreamer.prototype.seek = function(start, end) {
