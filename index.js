@@ -1,5 +1,6 @@
-var inherits = require('util').inherits
-  , request = require('request');
+var inherits  = require('util').inherits
+    , request = require('request')
+    , debug   = require('debug')('butter-streamer-http');
 
 var Streamer = require('butter-base-streamer');
 
@@ -21,10 +22,14 @@ function HttpStreamer(source, options) {
 	this._req = this.request(source, options.http);
 	this._req.on('response', function(res) {
 		var length = self._req.getHeader('content-length', res.headers);
+		debug('got response', length)
+
 		if(length !== undefined) {
-            self._progress.setLength(parseInt(length));
-            self.file.length = length;
-        }
+			self._progress.setLength(parseInt(length));
+			self.file.length = length;
+		}
+
+		self._isReady();
 	})
 	this._streamify.resolve(this._req);
 }
@@ -67,7 +72,7 @@ HttpStreamer.prototype.destroy = function() {
 	this._streamify.unresolve();
 	this._req = null;
 	this._destroyed = true;
-    this.file = {};
+	this.file = {};
 }
 
 module.exports = HttpStreamer;
