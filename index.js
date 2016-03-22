@@ -21,22 +21,24 @@ function HttpStreamer(source, options) {
 	this._req = this.request(source, options.http);
 	this._req.on('response', function(res) {
 		var length = self._req.getHeader('content-length', res.headers);
-		if(length !== undefined)
-			self._progress.setLength(parseInt(length));
+		if(length !== undefined) {
+            self._progress.setLength(parseInt(length));
+            self.file.length = length;
+        }
 	})
 	this._streamify.resolve(this._req);
 }
 inherits(HttpStreamer, Streamer);
 
 HttpStreamer.prototype.config = {
-	name: 'HTTP Streamer',
-	protocol: /https?/,
-	type: 'http'
+       name: 'HTTP Streamer',
+       protocol: /https?/,
+       type: 'http'
 }
 
 HttpStreamer.prototype.seek = function(start, end) {
 	if(this._destroyed) throw new ReferenceError('Streamer already destroyed');
-	
+
 	var self = this;
 	start = start || 0;
 
