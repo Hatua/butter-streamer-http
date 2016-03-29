@@ -26,10 +26,11 @@ function HttpStreamer(source, options) {
 
 		if(length !== undefined) {
 			self._progress.setLength(parseInt(length));
-			self.file.length = length;
 		}
 
-		self._isReady();
+		self._isReady({
+			length: length,
+		});
 	})
 	this._streamify.resolve(this._req);
 }

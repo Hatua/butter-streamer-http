@@ -1,6 +1,6 @@
 {
   "name": "butter-streamer-http",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Butter Streamer for http streams, the simplest around",
   "main": "index.js",
   "scripts": {
