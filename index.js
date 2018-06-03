@@ -34,11 +34,8 @@ class HttpStreamer extends Streamer {
     })
   }
 
-  seek (start, end) {
+  seek (start = 0, end) {
     if (this._destroyed) throw new ReferenceError('Streamer already destroyed')
-
-    const self = this
-    start = start || 0
 
     if (this._req) { this._req.destroy() }
 
@@ -46,20 +43,17 @@ class HttpStreamer extends Streamer {
       headers: {
         'Range': 'bytes=' + start + '-' + (end !== undefined ? end : '')
       }
-    }).on('response', function (res) {
+    }).on('response', (res) => {
       const length = Number(res.headers['content-length'])
       this.reset(this._req, {length,})
     })
   }
 
   destroy () {
-    if (this._destroyed) throw new ReferenceError('Streamer already destroyed')
+    super.destroy()
 
     if (this._req) { this._req.destroy() }
-    this.close()
     this._req = null
-    this._destroyed = true
-    this.file = {}
   }
 }
 

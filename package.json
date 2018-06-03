@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Butter Streamer for http streams, the simplest around",
   "main": "index.js",
+  "butter": {
+    "testArgs": "http?uri=\"http://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_surround-fix.avi\""
+  },
   "scripts": {
     "test": "mocha ./node_modules/butter-test-streamer/",
     "lint": "standard --env mocha"
@@ -16,7 +19,7 @@
     "streamer",
     "http"
   ],
-  "author": "XeonCore",
+  "author": "Niv Sardi <x@btn.sh>",
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/butterstreamers/butter-streamer-http/issues"
