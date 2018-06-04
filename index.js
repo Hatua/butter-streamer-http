@@ -27,16 +27,19 @@ class HttpStreamer extends Streamer {
       debug('req', options)
       this._req = request(source, options)
       this._req.on('response', (res) => {
-        const length = Number(res.headers['content-length'])
+        const file = {
+          length: Number(res.headers['content-length']),
+          type: res.headers['content-type'],
+          name: source.split('/').pop().split('?').shift()
+        }
 
-        if (!length) {
+        if (!file.length) {
           reject (new Error('stream didnt return a length, is it seekeable ?'))
         }
 
         accept({
           stream: this._req,
-          length: length
-
+          file,
         })
       })
     })
