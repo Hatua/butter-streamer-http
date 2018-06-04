@@ -12,46 +12,38 @@ const config = {
 /* -- HTTP Streamer -- */
 class HttpStreamer extends Streamer {
   constructor (source, options = {}) {
-    super(options)
-
-    this.request = request.defaults({
-      encoding: null
-    })
-
-    this.config = config
-
-    this._options = options
-    this._source = source
-
-    this._req = this.request(source, options.http)
-    this._req.on('response', (res) => {
-      const length = Number(res.headers['content-length'])
-      debug('got response', length)
-
-      if (length) {
-        this.ready(this._req, {length,})
-      }
-    })
+    super(source, options, config)
   }
 
-  seek (start = 0, end) {
-    if (this._destroyed) throw new ReferenceError('Streamer already destroyed')
+  createStream (source, opts) {
+    return new Promise ((accept, reject) => {
+      const headers = opts ? {headers: {
+        'Range': 'bytes='
+               + parseInt(opts.start) + '-'
+               + (opts.end !== undefined ? parseInt(opts.end) : '')
+      }} : null
 
-    if (this._req) { this._req.destroy() }
+      const options = Object.assign({encoding: null}, this.options.http, headers)
+      debug('req', options)
+      this._req = request(source, options)
+      this._req.on('response', (res) => {
+        const length = Number(res.headers['content-length'])
 
-    this._req = this.request(this._source, {
-      headers: {
-        'Range': 'bytes=' + start + '-' + (end !== undefined ? end : '')
-      }
-    }).on('response', (res) => {
-      const length = Number(res.headers['content-length'])
-      this.reset(this._req, {length,})
+        if (!length) {
+          reject (new Error('stream didnt return a length, is it seekeable ?'))
+        }
+
+        accept({
+          stream: this._req,
+          length: length
+
+        })
+      })
     })
   }
 
   destroy () {
     super.destroy()
-
     if (this._req) { this._req.destroy() }
     this._req = null
   }
