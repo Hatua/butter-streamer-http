@@ -1,6 +1,8 @@
 const request = require('request')
 const debug = require('debug')('butter-streamer-http')
 
+const HttpFile = require('./file')
+
 const Streamer = require('butter-streamer')
 const config = {
   name: 'HTTP Streamer',
@@ -15,40 +17,20 @@ class HttpStreamer extends Streamer {
     super(source, options, config)
   }
 
-  createStream (source, opts) {
-    return new Promise ((accept, reject) => {
-      const headers = opts ? {headers: {
-        'Range': 'bytes='
-               + parseInt(opts.start) + '-'
-               + (opts.end !== undefined ? parseInt(opts.end) : '')
-      }} : null
-
-      const options = Object.assign({encoding: null}, this.options.http, headers)
-      debug('req', options)
-      this._req = request(source, options)
-      this._req.on('response', (res) => {
-        const file = {
+  initialize (source, options) {
+    debug ('http stream', source, options)
+    return new Promise((resolve, reject) => {
+      this.stream = request.head(source)
+      this.stream.on('response', res => {
+        this.name = source.split('/').pop().split('?').shift()
+        const info = {
           length: Number(res.headers['content-length']),
           type: res.headers['content-type'],
-          name: source.split('/').pop().split('?').shift()
+          name: this.name
         }
-
-        if (!file.length) {
-          reject (new Error('stream didnt return a length, is it seekeable ?'))
-        }
-
-        accept({
-          stream: this._req,
-          file,
-        })
+        resolve([new HttpFile(source, info)])
       })
     })
-  }
-
-  destroy () {
-    super.destroy()
-    if (this._req) { this._req.destroy() }
-    this._req = null
   }
 }
 
