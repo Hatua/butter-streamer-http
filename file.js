@@ -1,5 +1,5 @@
 const request = require('request')
-const ProgressFile = require('butter-streamer/progress-file')
+const ProgressFile = require('butter-streamer/progress/file')
 const debug = require('debug')('butter-streamer-http:file')
 
 class HttpFile extends ProgressFile {

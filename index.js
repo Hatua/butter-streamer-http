@@ -3,7 +3,7 @@ const debug = require('debug')('butter-streamer-http')
 
 const HttpFile = require('./file')
 
-const ProgressStreamer = require('butter-streamer/progress-streamer')
+const ProgressStreamer = require('butter-streamer/progress/streamer')
 const config = {
   name: 'HTTP Streamer',
   protocol: /https?/,
