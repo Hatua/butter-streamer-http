@@ -1,10 +1,10 @@
 const request = require('request')
-const EventEmitter = require('events').EventEmitter
+const ProgressFile = require('butter-streamer/progress-file')
 const debug = require('debug')('butter-streamer-http:file')
 
-class HttpFile extends EventEmitter {
+class HttpFile extends ProgressFile {
     constructor(source, {length, type, name}) {
-        super()
+        super(length)
 
         this.source = source
         this.length = length
@@ -14,9 +14,9 @@ class HttpFile extends EventEmitter {
         debug('http file', source, length, type, name)
     }
 
-    createReadStream(range) {
+    _createReadStream(range) {
         debug('createReadStream', range)
-        
+
         const headers = range ? {headers: {
             'Range': 'bytes='
                    + parseInt(range.start) + '-'
